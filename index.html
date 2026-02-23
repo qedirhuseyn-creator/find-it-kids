@@ -9,225 +9,549 @@
   <meta name="theme-color" content="#4FD1C5">
 
   <style>
+    :root{
+      --bg1:#b9f6ca;
+      --bg2:#81e6d9;
+      --card:#ffffff;
+      --text:#1a202c;
+      --muted:#718096;
+      --btn:#2d3748;
+      --btn2:#edf2f7;
+      --shadow:0 12px 30px rgba(0,0,0,.14);
+      --radius:22px;
+    }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       min-height:100vh;
-      background:linear-gradient(180deg,#c6f6d5,#81e6d9);
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));
       display:flex;
+      align-items:center;
       justify-content:center;
+      padding:18px;
+      color:var(--text);
+    }
+    .wrap{
+      width:100%;
+      max-width:460px;
+    }
+    .panel{
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 18px 14px;
+    }
+    .title{
+      font-size:32px;
+      font-weight:800;
+      margin:6px 0 10px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .row{
+      display:flex;
+      gap:12px;
       align-items:center;
     }
-    .card{
-      background:#fff;
-      border-radius:20px;
-      padding:20px;
-      width:95%;
-      max-width:420px;
-      box-shadow:0 10px 25px rgba(0,0,0,.15);
+    .avatar{
+      width:76px;
+      height:76px;
+      border-radius:50%;
+      background:#e2e8f0;
+      overflow:hidden;
+      flex:0 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 6px 14px rgba(0,0,0,.12);
     }
-    h2{margin-top:0}
-    input,select,button{
+    .avatar img{
       width:100%;
-      padding:12px;
-      margin:6px 0;
-      border-radius:12px;
-      border:1px solid #ccc;
+      height:100%;
+      object-fit:cover;
+      display:none;
+    }
+    .avatar .ph{
+      font-size:30px;
+      opacity:.65;
+    }
+
+    .field{
+      width:100%;
+      margin:10px 0;
+    }
+    input[type="text"], select{
+      width:100%;
+      padding:13px 14px;
+      border-radius:16px;
+      border:1px solid #e2e8f0;
       font-size:16px;
+      outline:none;
+      background:#fff;
+    }
+    input[type="text"]::placeholder{color:#a0aec0}
+    .file{
+      width:100%;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px dashed #cbd5e0;
+      background:#f7fafc;
+      font-size:15px;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
     }
     button{
-      background:#2d3748;
-      color:#fff;
-      border:none;
+      width:100%;
+      padding:13px 14px;
+      border-radius:16px;
+      border:0;
+      font-size:16px;
+      font-weight:700;
       cursor:pointer;
     }
-    button.secondary{
-      background:#edf2f7;
-      color:#000;
+    .btnPrimary{
+      background:var(--btn);
+      color:#fff;
     }
-    .row{display:flex;gap:8px}
-    .hidden{display:none}
-    .game{
+    .btnGhost{
+      background:var(--btn2);
+      color:var(--text);
+    }
+
+    /* GAME */
+    .topBar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:14px;
+    }
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#ffffffcc;
+      border:1px solid #e2e8f0;
+      padding:10px 12px;
+      border-radius:18px;
+      box-shadow:0 8px 18px rgba(0,0,0,.08);
+      backdrop-filter: blur(6px);
+    }
+    .pill b{font-size:16px}
+    .score{
+      min-width:88px;
+      justify-content:center;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:14px;
+      margin-top:10px;
+    }
+    .cardItem{
+      background:#ffffffcc;
+      border:1px solid #e2e8f0;
+      border-radius:22px;
+      height:120px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:54px;
+      user-select:none;
+      cursor:pointer;
+      box-shadow:0 10px 22px rgba(0,0,0,.08);
+      transition:transform .08s ease;
+    }
+    .cardItem:active{transform:scale(.98)}
+    .gameBtns{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+    }
+    .tiny{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
       text-align:center;
     }
-    .items{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:12px;
-      margin-top:15px;
-    }
-    .item{
-      background:#f7fafc;
-      border-radius:16px;
-      padding:20px;
-      font-size:48px;
-      cursor:pointer;
-      user-select:none;
-    }
+
+    .hidden{display:none}
   </style>
 </head>
 
 <body>
-<div class="card">
+  <div class="wrap">
 
-  <!-- SETTINGS -->
-  <div id="settings">
-    <h2 id="settingsTitle">Ayarlar</h2>
+    <!-- SETTINGS -->
+    <div id="settings" class="panel">
+      <div class="title" id="t_settings">Ayarlar</div>
+      <p class="sub" id="t_hint">
+        Uşağın adını yazın və şəkil yükləyin. Dili seçin (AZ/RU/EN). Sonra Start basın.
+      </p>
 
-    <input id="childName" placeholder="Uşağın adı">
+      <div class="row">
+        <div class="avatar" id="avatarBox">
+          <span class="ph">👧</span>
+          <img id="avatarImg" alt="avatar"/>
+        </div>
 
-    <input type="file" id="photoInput" accept="image/*">
+        <div style="flex:1">
+          <div class="field">
+            <input id="childName" type="text" placeholder="Uşağın adı" />
+          </div>
+          <div class="field">
+            <input id="photoInput" class="file" type="file" accept="image/*" />
+          </div>
+        </div>
+      </div>
 
-    <select id="langSelect">
-      <option value="az">🇦🇿 Azərbaycan</option>
-      <option value="ru">🇷🇺 Русский</option>
-      <option value="en">🇬🇧 English</option>
-    </select>
+      <div class="field">
+        <select id="langSelect">
+          <option value="az">🇦🇿 Azərbaycan</option>
+          <option value="ru">🇷🇺 Русский</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+      </div>
 
-    <div class="row">
-      <button class="secondary" onclick="clearAll()">Clear</button>
-      <button onclick="startGame()">Start</button>
+      <div class="btnRow">
+        <button class="btnGhost" id="btnClear" type="button">Clear</button>
+        <button class="btnPrimary" id="btnStart" type="button">Start</button>
+      </div>
+
+      <div class="tiny" id="t_tip">
+        İpucu: Bəzən səs ilk toxunuşdan sonra aktiv olur.
+      </div>
     </div>
 
-    <small id="hint"></small>
+    <!-- GAME -->
+    <div id="game" class="hidden">
+      <div class="topBar">
+        <div class="pill">
+          <span id="flag">🇦🇿</span>
+          <b id="t_taskLabel">Tap</b>
+          <span id="childChip" style="color:#4a5568"></span>
+        </div>
+
+        <div class="pill score">
+          ⭐ <b id="score">0</b>
+        </div>
+      </div>
+
+      <!-- Tapşırıq ekranda yazılmayacaq: yalnız səs -->
+      <div class="panel">
+        <div class="grid" id="grid"></div>
+
+        <div class="gameBtns">
+          <button class="btnGhost" id="btnNew" type="button">Yeni</button>
+          <button class="btnGhost" id="btnBack" type="button">Geri</button>
+        </div>
+
+        <div class="tiny" id="t_gameTip">
+          Tapşırıq yalnız səs ilə deyilir.
+        </div>
+      </div>
+    </div>
+
   </div>
-
-  <!-- GAME -->
-  <div id="game" class="hidden game">
-    <h2 id="taskText"></h2>
-
-    <div class="items" id="items"></div>
-
-    <button class="secondary" onclick="newRound()" id="newBtn"></button>
-    <button class="secondary" onclick="backToSettings()" id="backBtn"></button>
-  </div>
-
-</div>
 
 <script>
-/* ================= I18N ================= */
-const i18n = {
-  az:{
-    settingsTitle:"Ayarlar",
-    hint:"Uşağın adını yazın, şəkil seçin, dili seçin və Start basın.",
-    find:"Tap:",
-    new:"Yeni",
-    back:"Geri",
-    bravo:"Aferin",
-    wrong:"Yalnışdır",
-    tryAgain:"Təkrar cəhd et"
+/* ===================== I18N ===================== */
+const I18N = {
+  az: {
+    settings: "Ayarlar",
+    hint: "Uşağın adını yazın və şəkil yükləyin. Dili seçin (AZ/RU/EN). Sonra Start basın.",
+    tip: "İpucu: Bəzən səs ilk toxunuşdan sonra aktiv olur.",
+    clear: "Clear",
+    start: "Start",
+    new: "Yeni",
+    back: "Geri",
+    taskLabel: "Tap",
+    gameTip: "Tapşırıq yalnız səs ilə deyilir.",
+    sayFind: (x) => `${x}-i tap`,
+    bravo: (name)=> `Aferin, ${name}!`,
+    wrong: (name)=> `Yalnışdır, ${name}. Təkrar cəhd et.`
   },
-  ru:{
-    settingsTitle:"Настройка",
-    hint:"Введите имя ребёнка, выберите язык и нажмите Start.",
-    find:"Найди:",
-    new:"Новый",
-    back:"Назад",
-    bravo:"Правильно",
-    wrong:"Неправильно",
-    tryAgain:"Попробуй ещё раз"
+  ru: {
+    settings: "Настройка",
+    hint: "Введите имя ребёнка и загрузите фото. Выберите язык (RU/EN/AZ). Затем нажмите Start.",
+    tip: "Подсказка: иногда голос включается после первого нажатия.",
+    clear: "Clear",
+    start: "Start",
+    new: "Новый",
+    back: "Назад",
+    taskLabel: "Найди",
+    gameTip: "Задание звучит только голосом.",
+    sayFind: (x) => `Найди ${x}`,
+    bravo: (name)=> `Правильно, ${name}!`,
+    wrong: (name)=> `Неправильно, ${name}. Попробуй ещё раз.`
   },
-  en:{
-    settingsTitle:"Settings",
-    hint:"Enter child name, choose language and press Start.",
-    find:"Find:",
-    new:"New",
-    back:"Back",
-    bravo:"Great job",
-    wrong:"Wrong",
-    tryAgain:"Try again"
+  en: {
+    settings: "Settings",
+    hint: "Enter the child's name and upload a photo. Choose language (EN/RU/AZ). Then press Start.",
+    tip: "Tip: sometimes voice works after the first tap.",
+    clear: "Clear",
+    start: "Start",
+    new: "New",
+    back: "Back",
+    taskLabel: "Find",
+    gameTip: "The task is spoken only.",
+    sayFind: (x) => `Find ${x}`,
+    bravo: (name)=> `Great job, ${name}!`,
+    wrong: (name)=> `Not correct, ${name}. Try again.`
   }
 };
 
-/* ================= DATA ================= */
-const data = ["🎁","🍋","🎈","🐶"];
-let currentLang="az";
-let childName="";
-let correctItem="";
+/* ===================== POOLS ===================== */
+// Sadə demo: istəyirsən sonra siyahıları genişləndirək (20 rəqəm, 50/50/50)
+// İndi isə stabil işləsin deyə orta ölçüdə saxladım:
+const NUMBERS = Array.from({length: 20}, (_,i)=> String(i+1));
 
-/* ================= SPEECH ================= */
+const FRUITS = ["🍎","🍌","🍇","🍓","🍒","🍑","🍍","🥭","🍉","🍐","🍊","🍋"];
+const ANIMALS = ["🐶","🐱","🐰","🦊","🐻","🐼","🐯","🦁","🐸","🐵","🐨","🐮"];
+const OBJECTS = ["🎁","🎈","🚗","✏️","📘","🎧","⌚","🧸","⚽","🪁","🧩","🖍️"];
+
+function pickCategoryItem(){
+  const all = [
+    ...NUMBERS.map(x=>({type:"num", val:x})),
+    ...FRUITS.map(x=>({type:"fruit", val:x})),
+    ...ANIMALS.map(x=>({type:"animal", val:x})),
+    ...OBJECTS.map(x=>({type:"obj", val:x}))
+  ];
+  return all[Math.floor(Math.random()*all.length)];
+}
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ===================== STATE ===================== */
+let lang = "az";
+let child = "Uşaq";
+let scoreVal = 0;
+let correct = null;
+let speakingLock = false;
+let pendingNext = null;
+
+/* ===================== SPEECH (fallback) ===================== */
+function getVoicesSafe(){
+  try { return window.speechSynthesis?.getVoices?.() || []; }
+  catch { return []; }
+}
 function pickVoice(lang){
-  const voices = speechSynthesis.getVoices();
-  const map={
-    az:["az","tr"],
-    ru:["ru"],
-    en:["en"]
-  }[lang]||["en"];
-  for(const c of map){
-    const v=voices.find(v=>v.lang.toLowerCase().startsWith(c));
+  const voices = getVoicesSafe();
+  const prefs = {
+    az: ["az", "az-AZ", "tr-TR", "tr"],
+    ru: ["ru", "ru-RU"],
+    en: ["en-GB", "en", "en-US"]
+  }[lang] || ["en"];
+  for(const code of prefs){
+    const v = voices.find(x => (x.lang||"").toLowerCase().startsWith(code.toLowerCase()));
     if(v) return v;
   }
-  return voices[0];
-}
-function speak(text,lang){
-  if(!speechSynthesis) return;
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang={az:"az-AZ",ru:"ru-RU",en:"en-GB"}[lang]||"en-GB";
-  u.voice=pickVoice(lang);
-  setTimeout(()=>speechSynthesis.speak(u),100);
+  return voices[0] || null;
 }
 
-/* ================= UI ================= */
+function speak(text){
+  if(!window.speechSynthesis) return;
+
+  // eyni anda üst-üstə danışmasın
+  window.speechSynthesis.cancel();
+  speakingLock = true;
+
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.95;
+  u.pitch = 1.05;
+  u.lang = ({az:"az-AZ",ru:"ru-RU",en:"en-GB"}[lang] || "en-GB");
+
+  const v = pickVoice(lang);
+  if(v) u.voice = v;
+
+  u.onend = () => {
+    speakingLock = false;
+    if(pendingNext){
+      const fn = pendingNext;
+      pendingNext = null;
+      fn();
+    }
+  };
+  u.onerror = () => { speakingLock = false; };
+
+  // ilk klik tələbi üçün kiçik gecikmə
+  setTimeout(()=>window.speechSynthesis.speak(u), 80);
+}
+
+/* ===================== UI HELPERS ===================== */
+const $ = (id)=>document.getElementById(id);
+
 function applyLang(){
-  const t=i18n[currentLang];
-  settingsTitle.textContent=t.settingsTitle;
-  hint.textContent=t.hint;
-  newBtn.textContent=t.new;
-  backBtn.textContent=t.back;
+  const t = I18N[lang];
+  $("t_settings").textContent = t.settings;
+  $("t_hint").textContent = t.hint;
+  $("t_tip").textContent = t.tip;
+  $("btnClear").textContent = t.clear;
+  $("btnStart").textContent = t.start;
+  $("btnNew").textContent = t.new;
+  $("btnBack").textContent = t.back;
+  $("t_taskLabel").textContent = t.taskLabel;
+  $("t_gameTip").textContent = t.gameTip;
+
+  $("flag").textContent = (lang==="az"?"🇦🇿":lang==="ru"?"🇷🇺":"🇬🇧");
 }
 
-function startGame(){
-  childName = childNameInput.value || "Uşaq";
-  currentLang = langSelect.value;
-  applyLang();
-  settings.classList.add("hidden");
-  game.classList.remove("hidden");
-  newRound();
+function showGame(){
+  $("settings").classList.add("hidden");
+  $("game").classList.remove("hidden");
+}
+function showSettings(){
+  $("game").classList.add("hidden");
+  $("settings").classList.remove("hidden");
 }
 
-function newRound(){
-  const t=i18n[currentLang];
-  correctItem = data[Math.floor(Math.random()*data.length)];
-  taskText.textContent = t.find;
-  speak(`${t.find}`, currentLang);
+function setAvatarFromFile(file){
+  const img = $("avatarImg");
+  const ph = $("avatarBox").querySelector(".ph");
+  if(!file){
+    img.style.display="none";
+    ph.style.display="block";
+    img.src="";
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    img.src = e.target.result;
+    img.style.display="block";
+    ph.style.display="none";
+  };
+  reader.readAsDataURL(file);
+}
 
-  items.innerHTML="";
-  data.forEach(i=>{
-    const d=document.createElement("div");
-    d.className="item";
-    d.textContent=i;
-    d.onclick=()=>check(i);
-    items.appendChild(d);
+/* ===================== GAME LOGIC ===================== */
+function buildRound(){
+  const t = I18N[lang];
+
+  // 1 doğru seçim
+  correct = pickCategoryItem();
+
+  // 3 yanlış seçim (unique)
+  const opts = new Map();
+  opts.set(correct.val, correct);
+
+  while(opts.size < 4){
+    const it = pickCategoryItem();
+    if(!opts.has(it.val)) opts.set(it.val, it);
+  }
+
+  const arr = shuffle([...opts.values()]);
+  const grid = $("grid");
+  grid.innerHTML = "";
+
+  arr.forEach(it=>{
+    const div = document.createElement("div");
+    div.className = "cardItem";
+    div.textContent = it.val;
+    div.onclick = ()=> onPick(it);
+    grid.appendChild(div);
   });
+
+  // tapşırıq ekranda göstərilməsin — yalnız səs
+  // “Tap: …” yazısını gizli saxlayırıq (label qalır, amma hədəf görünmür)
+  $("childChip").textContent = child ? `• ${child}` : "";
+
+  // Səsi ver
+  const targetSpoken = t.sayFind(correct.val);
+  speak(targetSpoken);
 }
 
-function check(item){
-  const t=i18n[currentLang];
-  if(item===correctItem){
-    speak(`${t.bravo}, ${childName}!`, currentLang);
-    setTimeout(newRound,1200);
+function onPick(it){
+  const t = I18N[lang];
+
+  // danışıq gedirsə, klikləri bir az blokla (qarışıqlıq olmasın)
+  if(speakingLock) return;
+
+  if(it.val === correct.val){
+    scoreVal += 1;
+    $("score").textContent = String(scoreVal);
+
+    // əvvəl “Aferin, Ad!” bitsin, sonra yeni mərhələ
+    speak(t.bravo(child));
+    pendingNext = ()=> setTimeout(buildRound, 250); // kiçik pauza
   }else{
-    speak(`${t.wrong}, ${childName}. ${t.tryAgain}`, currentLang);
+    speak(t.wrong(child));
   }
 }
 
-function backToSettings(){
-  game.classList.add("hidden");
-  settings.classList.remove("hidden");
+function newGame(){
+  buildRound();
 }
 
-function clearAll(){
-  childNameInput.value="";
-  photoInput.value="";
-}
+/* ===================== EVENTS ===================== */
+$("photoInput").addEventListener("change", (e)=>{
+  const file = e.target.files && e.target.files[0];
+  setAvatarFromFile(file);
+});
 
-/* ================= PWA ================= */
+$("langSelect").addEventListener("change", (e)=>{
+  lang = e.target.value || "az";
+  applyLang();
+});
+
+$("btnClear").addEventListener("click", ()=>{
+  $("childName").value = "";
+  $("photoInput").value = "";
+  setAvatarFromFile(null);
+});
+
+$("btnStart").addEventListener("click", ()=>{
+  // lang
+  lang = $("langSelect").value || "az";
+  applyLang();
+
+  // child name
+  child = ($("childName").value || "").trim();
+  if(!child) child = (lang==="ru"?"Ребёнок":lang==="en"?"Kid":"Uşaq");
+
+  // reset score
+  scoreVal = 0;
+  $("score").textContent = "0";
+
+  showGame();
+  // ilk toxunuş tələb oluna bilər — biz startda da səs veririk
+  setTimeout(buildRound, 120);
+});
+
+$("btnBack").addEventListener("click", ()=>{
+  showSettings();
+});
+
+$("btnNew").addEventListener("click", ()=>{
+  buildRound();
+});
+
+/* voices sometimes load async */
+window.speechSynthesis?.addEventListener?.("voiceschanged", ()=>{});
+
+/* init */
+applyLang();
+
+/* ===================== PWA ===================== */
 if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("service-worker.js");
+  navigator.serviceWorker.register("service-worker.js").catch(()=>{});
 }
 </script>
-
 </body>
 </html>
