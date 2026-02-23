@@ -1,1012 +1,233 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="az">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-  <title>Find It Game (Kids)</title>
-  <link rel="manifest" 
-    href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tap Oyunu</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4FD1C5">
+
   <style>
-    :root{
-      --bg1:#bff0ff;
-      --bg2:#b9f7c6;
-      --card:rgba(255,255,255,.85);
-      --shadow:0 10px 30px rgba(0,0,0,.12);
-    }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
       min-height:100vh;
-      overflow:hidden;
-      background:
-        radial-gradient(1200px 700px at 30% 20%, var(--bg1), transparent 60%),
-        radial-gradient(1200px 700px at 70% 80%, var(--bg2), transparent 60%),
-        linear-gradient(#dff9ff, #e8ffe9);
-      user-select:none;
-      touch-action:manipulation;
-    }
-
-    .hud{
-      position:fixed;
-      top:12px; left:12px; right:12px;
+      background:linear-gradient(180deg,#c6f6d5,#81e6d9);
       display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      z-index:5;
-    }
-    .bubble{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      background:var(--card);
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(6px);
-      max-width:72%;
-      min-height:44px;
-    }
-    .flag{
-      font-size:22px;
-      line-height:1;
-    }
-    .score{
-      padding:10px 14px;
-      background:rgba(255,255,255,.75);
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight:800;
-      min-height:44px;
-    }
-    .star{
-      width:26px; height:26px;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
-    }
-
-    .hint{
-      position:fixed;
-      bottom:14px; left:12px; right:12px;
-      display:flex;
-      gap:10px;
       justify-content:center;
-      flex-wrap:wrap;
-      z-index:5;
-    }
-    .btn{
-      border:none;
-      padding:10px 14px;
-      border-radius:14px;
-      box-shadow:var(--shadow);
-      background:rgba(255,255,255,.78);
-      font-weight:700;
-      cursor:pointer;
-    }
-    .btn.primary{
-      background: rgba(0,0,0,.78);
-      color:#fff;
-    }
-    .toast{
-      position:fixed;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      padding:14px 16px;
-      border-radius:16px;
-      background:rgba(0,0,0,.65);
-      color:#fff;
-      font-weight:800;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .2s ease;
-      z-index:10;
-      text-align:center;
-      white-space:nowrap;
-    }
-    .toast.show{ opacity:1; }
-
-    canvas#fx{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:9;
-    }
-
-    .screen{
-      position:absolute;
-      inset:0;
-      display:none;
-    }
-    .screen.active{ display:block; }
-
-    .setupWrap{
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      padding:18px;
-    }
-    .setupCard{
-      width:min(520px, 96vw);
-      background:rgba(255,255,255,.80);
-      border-radius:22px;
-      box-shadow: var(--shadow);
-      padding:16px;
-      backdrop-filter: blur(8px);
-    }
-    .setupTitle{
-      font-size:20px;
-      font-weight:900;
-      margin:0 0 6px 0;
-    }
-    .setupNote{
-      opacity:.7;
-      font-size:13px;
-      margin:0 0 12px 0;
-    }
-    .setupRow{
-      display:flex;
-      gap:12px;
       align-items:center;
-      margin:10px 0;
-      flex-wrap:wrap;
     }
-    .input{
-      flex:1 1 220px;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(0,0,0,.10);
-      background:rgba(255,255,255,.9);
-      font-size:16px;
-      outline:none;
+    .card{
+      background:#fff;
+      border-radius:20px;
+      padding:20px;
+      width:95%;
+      max-width:420px;
+      box-shadow:0 10px 25px rgba(0,0,0,.15);
     }
-    .select{
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(0,0,0,.10);
-      background:rgba(255,255,255,.9);
-      font-size:16px;
-      outline:none;
-    }
-    .avatarBox{
-      width:86px;
-      height:86px;
-      border-radius:999px;
-      overflow:hidden;
-      background:rgba(0,0,0,.06);
-      box-shadow: 0 10px 22px rgba(0,0,0,.12);
-      flex:0 0 auto;
-      display:grid;
-      place-items:center;
-    }
-    .avatarBox img{
+    h2{margin-top:0}
+    input,select,button{
       width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
+      padding:12px;
+      margin:6px 0;
+      border-radius:12px;
+      border:1px solid #ccc;
+      font-size:16px;
     }
-    .avatarFallback{
-      font-size:30px;
-      opacity:.55;
-    }
-
-    .game{
-      position:absolute;
-      inset:0;
-      padding-top:70px;
-    }
-    .field{
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-    }
-    .arena{
-      position:relative;
-      width:min(900px, 96vw);
-      height:min(540px, 74vh);
-    }
-    .tile{
-      position:absolute;
-      display:grid;
-      place-items:center;
-      width: clamp(92px, 18vw, 150px);
-      height: clamp(92px, 18vw, 150px);
-      border-radius:24px;
-      background: rgba(255,255,255,.70);
-      backdrop-filter: blur(5px);
-      box-shadow: 0 14px 28px rgba(0,0,0,.18);
+    button{
+      background:#2d3748;
+      color:#fff;
+      border:none;
       cursor:pointer;
-      transition: transform .12s ease;
     }
-    .tile:active{ transform: scale(.96); }
-    .tile .big{
-      font-size: clamp(52px, 10vw, 92px);
-      font-weight: 900;
-      line-height:1;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.12));
+    button.secondary{
+      background:#edf2f7;
+      color:#000;
     }
-
-    .kidTag{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-left:auto;
+    .row{display:flex;gap:8px}
+    .hidden{display:none}
+    .game{
+      text-align:center;
     }
-    .kidMini{
-      width:34px; height:34px;
-      border-radius:999px;
-      overflow:hidden;
-      background:rgba(0,0,0,.06);
-      box-shadow: 0 6px 14px rgba(0,0,0,.12);
-      flex:0 0 auto;
+    .items{
       display:grid;
-      place-items:center;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-top:15px;
     }
-    .kidMini img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .kidName{
-      font-weight:900;
-      font-size:14px;
-      opacity:.85;
-      max-width:120px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
+    .item{
+      background:#f7fafc;
+      border-radius:16px;
+      padding:20px;
+      font-size:48px;
+      cursor:pointer;
+      user-select:none;
     }
   </style>
 </head>
+
 <body>
+<div class="card">
 
-  <!-- SETUP SCREEN -->
-  <div class="screen active" id="setupScreen">
-    <div class="setupWrap">
-      <div class="setupCard">
-        <p class="setupTitle" id="setupTitle">Kid Setup</p>
-        <p class="setupNote" id="setupNote">
-          Enter the child’s name and upload a photo. Choose language (RU/EN). Then tap Start.
-        </p>
+  <!-- SETTINGS -->
+  <div id="settings">
+    <h2 id="settingsTitle">Ayarlar</h2>
 
-        <div class="setupRow">
-          <div class="avatarBox" id="avatarBox">
-            <div class="avatarFallback" id="avatarFallback">👧</div>
-            <img id="avatarImg" alt="avatar" style="display:none;" />
-          </div>
+    <input id="childName" placeholder="Uşağın adı">
 
-          <div style="flex:1 1 280px; min-width:240px;">
-            <input class="input" id="kidNameInput" placeholder="Name (e.g., Ali)" />
-            <div style="height:10px"></div>
-            <input class="input" id="photoInput" type="file" accept="image/*" />
-          </div>
-        </div>
+    <input type="file" id="photoInput" accept="image/*">
 
-        <div class="setupRow">
-          <select class="select" id="langSelect">
-            <option value="EN">🇺🇸 English</option>
-            <option value="RU">🇷🇺 Русский</option>
-          </select>
+    <select id="langSelect">
+      <option value="az">🇦🇿 Azərbaycan</option>
+      <option value="ru">🇷🇺 Русский</option>
+      <option value="en">🇬🇧 English</option>
+    </select>
 
-          <button class="btn" id="clearBtn">Clear</button>
-          <button class="btn primary" id="startBtn">Start</button>
-        </div>
-
-        <p class="setupNote" id="ttsNote">
-          Tip: On some phones, sound starts after the first tap.
-        </p>
-      </div>
+    <div class="row">
+      <button class="secondary" onclick="clearAll()">Clear</button>
+      <button onclick="startGame()">Start</button>
     </div>
+
+    <small id="hint"></small>
   </div>
 
-  <!-- GAME SCREEN -->
-  <div class="screen" id="gameScreen">
+  <!-- GAME -->
+  <div id="game" class="hidden game">
+    <h2 id="taskText"></h2>
 
-    <div class="hud">
-      <div class="bubble">
-        <div class="flag" id="flagEl">🇺🇸</div>
-        <div id="taskText" style="font-size:20px;font-weight:900;">Listen 👂</div>
+    <div class="items" id="items"></div>
 
-        <div class="kidTag" title="Kid">
-          <div class="kidMini" id="kidMini">
-            <div style="opacity:.55;">🙂</div>
-          </div>
-          <div class="kidName" id="kidNameHud">Ali</div>
-        </div>
-      </div>
-
-      <div class="score" title="Score">
-        <svg class="star" viewBox="0 0 24 24" fill="#ffcc33" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 17.27l-5.18 3.05 1.39-5.9L3 9.24l6.03-.52L12 3l2.97 5.72 6.03.52-5.21 5.18 1.39 5.9z"/>
-        </svg>
-        <div id="scoreText" style="font-size:22px;">0</div>
-      </div>
-    </div>
-
-    <div class="game">
-      <div class="field">
-        <div class="arena" id="arena"></div>
-      </div>
-    </div>
-
-    <div class="hint">
-      <button class="btn" id="newBtn">New</button>
-      <button class="btn" id="langBtn">Language: EN</button>
-      <button class="btn" id="soundBtn">Beep: On</button>
-      <button class="btn" id="voiceBtn">Voice: On</button>
-      <button class="btn" id="backBtn">Back</button>
-    </div>
-
-    <div class="toast" id="toast">Great!</div>
-    <canvas id="fx"></canvas>
+    <button class="secondary" onclick="newRound()" id="newBtn"></button>
+    <button class="secondary" onclick="backToSettings()" id="backBtn"></button>
   </div>
+
+</div>
 
 <script>
-(() => {
-  const LS_NAME = "kid_name_v1";
-  const LS_AVATAR = "kid_avatar_v1";
-  const LS_LANG = "kid_lang_v1";
-
-  // ---------------- Beep audio ----------------
-  let soundOn = true;
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  let ctx = null;
-
-  function beep(type="ok"){
-    if(!soundOn) return;
-    try{
-      if(!ctx) ctx = new AudioCtx();
-      const t0 = ctx.currentTime;
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-
-      if(type==="ok"){
-        o.type="sine";
-        o.frequency.setValueAtTime(660, t0);
-        o.frequency.exponentialRampToValueAtTime(990, t0 + 0.09);
-        g.gain.setValueAtTime(0.001, t0);
-        g.gain.exponentialRampToValueAtTime(0.35, t0 + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.14);
-        o.start(t0); o.stop(t0 + 0.15);
-      } else {
-        o.type="square";
-        o.frequency.setValueAtTime(240, t0);
-        g.gain.setValueAtTime(0.001, t0);
-        g.gain.exponentialRampToValueAtTime(0.25, t0 + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.18);
-        o.start(t0); o.stop(t0 + 0.2);
-      }
-    } catch(e){}
+/* ================= I18N ================= */
+const i18n = {
+  az:{
+    settingsTitle:"Ayarlar",
+    hint:"Uşağın adını yazın, şəkil seçin, dili seçin və Start basın.",
+    find:"Tap:",
+    new:"Yeni",
+    back:"Geri",
+    bravo:"Aferin",
+    wrong:"Yalnışdır",
+    tryAgain:"Təkrar cəhd et"
+  },
+  ru:{
+    settingsTitle:"Настройка",
+    hint:"Введите имя ребёнка, выберите язык и нажмите Start.",
+    find:"Найди:",
+    new:"Новый",
+    back:"Назад",
+    bravo:"Правильно",
+    wrong:"Неправильно",
+    tryAgain:"Попробуй ещё раз"
+  },
+  en:{
+    settingsTitle:"Settings",
+    hint:"Enter child name, choose language and press Start.",
+    find:"Find:",
+    new:"New",
+    back:"Back",
+    bravo:"Great job",
+    wrong:"Wrong",
+    tryAgain:"Try again"
   }
+};
 
-  // ---------------- TTS (SpeechSynthesis) ----------------
-  let voiceOn = true;
+/* ================= DATA ================= */
+const data = ["🎁","🍋","🎈","🐶"];
+let currentLang="az";
+let childName="";
+let correctItem="";
 
-  function pickVoice(lang){
-    const synth = window.speechSynthesis;
-    const voices = synth?.getVoices?.() || [];
-    const want = (lang === "RU") ? "ru" : "en";
-    return voices.find(v => (v.lang || "").toLowerCase().startsWith(want))
-        || voices.find(v => (v.lang || "").toLowerCase().includes(want))
-        || null;
+/* ================= SPEECH ================= */
+function pickVoice(lang){
+  const voices = speechSynthesis.getVoices();
+  const map={
+    az:["az","tr"],
+    ru:["ru"],
+    en:["en"]
+  }[lang]||["en"];
+  for(const c of map){
+    const v=voices.find(v=>v.lang.toLowerCase().startsWith(c));
+    if(v) return v;
   }
+  return voices[0];
+}
+function speak(text,lang){
+  if(!speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang={az:"az-AZ",ru:"ru-RU",en:"en-GB"}[lang]||"en-GB";
+  u.voice=pickVoice(lang);
+  setTimeout(()=>speechSynthesis.speak(u),100);
+}
 
-  function speak(text, lang){
-    return new Promise((resolve) => {
-      if(!voiceOn) return resolve();
-      if(!("speechSynthesis" in window)) return resolve();
+/* ================= UI ================= */
+function applyLang(){
+  const t=i18n[currentLang];
+  settingsTitle.textContent=t.settingsTitle;
+  hint.textContent=t.hint;
+  newBtn.textContent=t.new;
+  backBtn.textContent=t.back;
+}
 
-      try{
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
+function startGame(){
+  childName = childNameInput.value || "Uşaq";
+  currentLang = langSelect.value;
+  applyLang();
+  settings.classList.add("hidden");
+  game.classList.remove("hidden");
+  newRound();
+}
 
-        if(lang === "RU"){
-          u.lang = "ru-RU";
-        } else {
-          u.lang = "en-US";
-        }
+function newRound(){
+  const t=i18n[currentLang];
+  correctItem = data[Math.floor(Math.random()*data.length)];
+  taskText.textContent = t.find;
+  speak(`${t.find}`, currentLang);
 
-        const v = pickVoice(lang);
-        if(v) u.voice = v;
-
-        u.rate = 0.95;
-        u.pitch = 1.0;
-
-        u.onend = () => resolve();
-        u.onerror = () => resolve();
-
-        window.speechSynthesis.speak(u);
-
-        // fallback
-        setTimeout(resolve, 2500);
-      }catch(e){
-        resolve();
-      }
-    });
-  }
-
-  if("speechSynthesis" in window){
-    window.speechSynthesis.onvoiceschanged = () => {};
-  }
-
-  // ---------------- Language pack ----------------
-  let lang = "EN";
-  const LANG = {
-    EN: {
-      flag:"🇺🇸",
-      startTitle:"Kid Setup",
-      startNote:"Enter the child’s name and upload a photo. Choose language (RU/EN). Then tap Start.",
-      ttsTip:"Tip: On some phones, voice starts after the first tap.",
-      btnNew:"New",
-      btnBack:"Back",
-      btnSoundOn:"Beep: On",
-      btnSoundOff:"Beep: Off",
-      btnVoiceOn:"Voice: On",
-      btnVoiceOff:"Voice: Off",
-      langBtn:(l)=>`Language: ${l}`,
-      listenHud:"Listen 👂",
-      task:(name)=>`Find ${name}`,
-      correct:(kid)=>`Great job, ${kid}!`,
-      wrong:(kid)=>`Wrong, ${kid}. Try again.`,
-      toastGreat:"Great!",
-      toastTry:"Try again 🙂"
-    },
-    RU: {
-      flag:"🇷🇺",
-      startTitle:"Настройка",
-      startNote:"Введите имя ребёнка и загрузите фото. Выберите язык (RU/EN). Затем нажмите Start.",
-      ttsTip:"Подсказка: иногда голос включается после первого нажатия.",
-      btnNew:"Новый",
-      btnBack:"Назад",
-      btnSoundOn:"Звук: Вкл",
-      btnSoundOff:"Звук: Выкл",
-      btnVoiceOn:"Голос: Вкл",
-      btnVoiceOff:"Голос: Выкл",
-      langBtn:(l)=>`Язык: ${l}`,
-      listenHud:"Слушай 👂",
-      task:(name)=>`Найди ${name}`,
-      correct:(kid)=>`Правильно, ${kid}!`,
-      wrong:(kid)=>`Неправильно, ${kid}. Попробуй ещё.`,
-      toastGreat:"Отлично!",
-      toastTry:"Попробуй ещё 🙂"
-    }
-  };
-
-  // ---------------- Items ----------------
-  const NUMBERS = Array.from({length:20}, (_,i)=>{
-    const n = i+1;
-    return { icon:String(n), en:`number ${n}`, ru:`число ${n}` };
+  items.innerHTML="";
+  data.forEach(i=>{
+    const d=document.createElement("div");
+    d.className="item";
+    d.textContent=i;
+    d.onclick=()=>check(i);
+    items.appendChild(d);
   });
+}
 
-  const FRUITS = [
-    {icon:"🍎", en:"apple", ru:"яблоко"},
-    {icon:"🍏", en:"green apple", ru:"зелёное яблоко"},
-    {icon:"🍐", en:"pear", ru:"грушу"},
-    {icon:"🍊", en:"orange", ru:"апельсин"},
-    {icon:"🍋", en:"lemon", ru:"лимон"},
-    {icon:"🍌", en:"banana", ru:"банан"},
-    {icon:"🍉", en:"watermelon", ru:"арбуз"},
-    {icon:"🍇", en:"grapes", ru:"виноград"},
-    {icon:"🍓", en:"strawberry", ru:"клубнику"},
-    {icon:"🫐", en:"blueberries", ru:"голубику"},
-    {icon:"🍒", en:"cherries", ru:"вишню"},
-    {icon:"🍑", en:"peach", ru:"персик"},
-    {icon:"🥭", en:"mango", ru:"манго"},
-    {icon:"🍍", en:"pineapple", ru:"ананас"},
-    {icon:"🥥", en:"coconut", ru:"кокос"},
-    {icon:"🥝", en:"kiwi", ru:"киви"},
-    {icon:"🍅", en:"tomato", ru:"помидор"},
-    {icon:"🥑", en:"avocado", ru:"авокадо"},
-    {icon:"🍈", en:"melon", ru:"дыню"},
-    {icon:"🍐", en:"juicy pear", ru:"сочную грушу"},
-    {icon:"🍎", en:"red apple", ru:"красное яблоко"},
-    {icon:"🍓", en:"sweet strawberry", ru:"сладкую клубнику"},
-    {icon:"🍇", en:"purple grapes", ru:"фиолетовый виноград"},
-    {icon:"🍊", en:"tangerine", ru:"мандарин"},
-    {icon:"🍋", en:"sour lemon", ru:"кислый лимон"},
-    {icon:"🍌", en:"ripe banana", ru:"спелый банан"},
-    {icon:"🍉", en:"big watermelon", ru:"большой арбуз"},
-    {icon:"🍑", en:"pink peach", ru:"розовый персик"},
-    {icon:"🥭", en:"sweet mango", ru:"сладкое манго"},
-    {icon:"🍍", en:"fresh pineapple", ru:"свежий ананас"},
-    {icon:"🥝", en:"green kiwi", ru:"зелёный киви"},
-    {icon:"🥥", en:"coconut", ru:"кокос"},
-    {icon:"🍒", en:"two cherries", ru:"две вишни"},
-    {icon:"🫐", en:"blueberries", ru:"голубику"},
-    {icon:"🍈", en:"melon", ru:"дыню"},
-    {icon:"🥑", en:"avocado", ru:"авокадо"},
-    {icon:"🍅", en:"tomato", ru:"помидор"},
-    {icon:"🍎", en:"apple", ru:"яблоко"},
-    {icon:"🍏", en:"green apple", ru:"зелёное яблоко"},
-    {icon:"🍊", en:"orange", ru:"апельсин"},
-    {icon:"🍇", en:"grapes", ru:"виноград"},
-    {icon:"🍓", en:"strawberry", ru:"клубнику"},
-    {icon:"🥝", en:"kiwi", ru:"киви"},
-    {icon:"🥭", en:"mango", ru:"манго"},
-    {icon:"🍍", en:"pineapple", ru:"ананас"},
-    {icon:"🍋", en:"lemon", ru:"лимон"},
-    {icon:"🍌", en:"banana", ru:"банан"},
-    {icon:"🍉", en:"watermelon", ru:"арбуз"},
-    {icon:"🍒", en:"cherries", ru:"вишню"}
-  ];
-
-  const OBJECTS = [
-    {icon:"⚽", en:"ball", ru:"мяч"},
-    {icon:"🏀", en:"basketball", ru:"баскетбольный мяч"},
-    {icon:"🏈", en:"football", ru:"мяч для футбола"},
-    {icon:"🎾", en:"tennis ball", ru:"теннисный мяч"},
-    {icon:"🏐", en:"volleyball", ru:"волейбольный мяч"},
-    {icon:"🧸", en:"teddy bear", ru:"плюшевого мишку"},
-    {icon:"🚗", en:"car", ru:"машину"},
-    {icon:"🚕", en:"taxi", ru:"такси"},
-    {icon:"🚙", en:"SUV", ru:"внедорожник"},
-    {icon:"🚌", en:"bus", ru:"автобус"},
-    {icon:"🚲", en:"bicycle", ru:"велосипед"},
-    {icon:"🛴", en:"scooter", ru:"самокат"},
-    {icon:"✈️", en:"airplane", ru:"самолёт"},
-    {icon:"🚀", en:"rocket", ru:"ракету"},
-    {icon:"⌚", en:"watch", ru:"часы"},
-    {icon:"📱", en:"phone", ru:"телефон"},
-    {icon:"💡", en:"light bulb", ru:"лампочку"},
-    {icon:"🔑", en:"key", ru:"ключ"},
-    {icon:"🎈", en:"balloon", ru:"шарик"},
-    {icon:"🎁", en:"gift", ru:"подарок"},
-    {icon:"🧃", en:"juice box", ru:"сок"},
-    {icon:"🍯", en:"honey jar", ru:"мёд"},
-    {icon:"🥛", en:"milk", ru:"молоко"},
-    {icon:"🍼", en:"baby bottle", ru:"бутылочку"},
-    {icon:"🧩", en:"puzzle", ru:"пазл"},
-    {icon:"📚", en:"books", ru:"книги"},
-    {icon:"✏️", en:"pencil", ru:"карандаш"},
-    {icon:"🖍️", en:"crayon", ru:"мелок"},
-    {icon:"🧁", en:"cupcake", ru:"кекс"},
-    {icon:"🍪", en:"cookie", ru:"печенье"},
-    {icon:"🍬", en:"candy", ru:"конфету"},
-    {icon:"🎵", en:"music note", ru:"ноту"},
-    {icon:"🎧", en:"headphones", ru:"наушники"},
-    {icon:"📷", en:"camera", ru:"камеру"},
-    {icon:"🧢", en:"cap", ru:"кепку"},
-    {icon:"👟", en:"shoe", ru:"кроссовок"},
-    {icon:"🧤", en:"glove", ru:"перчатку"},
-    {icon:"🧣", en:"scarf", ru:"шарф"},
-    {icon:"🕶️", en:"sunglasses", ru:"очки"},
-    {icon:"☂️", en:"umbrella", ru:"зонт"},
-    {icon:"🪁", en:"kite", ru:"воздушного змея"},
-    {icon:"🧹", en:"broom", ru:"метлу"},
-    {icon:"🧺", en:"basket", ru:"корзину"},
-    {icon:"🪣", en:"bucket", ru:"ведро"},
-    {icon:"🪥", en:"toothbrush", ru:"зубную щётку"},
-    {icon:"🧼", en:"soap", ru:"мыло"},
-    {icon:"🧽", en:"sponge", ru:"губку"},
-    {icon:"🔔", en:"bell", ru:"колокольчик"},
-    {icon:"🪀", en:"yo-yo", ru:"йо-йо"},
-    {icon:"🎲", en:"dice", ru:"кубик"}
-  ];
-
-  const ANIMALS = [
-    {icon:"🐶", en:"dog", ru:"собаку"},
-    {icon:"🐱", en:"cat", ru:"кошку"},
-    {icon:"🐭", en:"mouse", ru:"мышь"},
-    {icon:"🐹", en:"hamster", ru:"хомяка"},
-    {icon:"🐰", en:"rabbit", ru:"кролика"},
-    {icon:"🦊", en:"fox", ru:"лису"},
-    {icon:"🐻", en:"bear", ru:"медведя"},
-    {icon:"🐼", en:"panda", ru:"панду"},
-    {icon:"🐨", en:"koala", ru:"коалу"},
-    {icon:"🐯", en:"tiger", ru:"тигра"},
-    {icon:"🦁", en:"lion", ru:"льва"},
-    {icon:"🐮", en:"cow", ru:"корову"},
-    {icon:"🐷", en:"pig", ru:"свинью"},
-    {icon:"🐸", en:"frog", ru:"лягушку"},
-    {icon:"🐵", en:"monkey", ru:"обезьяну"},
-    {icon:"🐔", en:"chicken", ru:"курицу"},
-    {icon:"🐧", en:"penguin", ru:"пингвина"},
-    {icon:"🦆", en:"duck", ru:"утку"},
-    {icon:"🦉", en:"owl", ru:"сову"},
-    {icon:"🦄", en:"unicorn", ru:"единорога"},
-    {icon:"🐴", en:"horse", ru:"лошадь"},
-    {icon:"🐺", en:"wolf", ru:"волка"},
-    {icon:"🐗", en:"boar", ru:"кабана"},
-    {icon:"🐍", en:"snake", ru:"змею"},
-    {icon:"🦖", en:"dinosaur", ru:"динозавра"},
-    {icon:"🦕", en:"dino", ru:"динозавра"},
-    {icon:"🐢", en:"turtle", ru:"черепаху"},
-    {icon:"🐠", en:"fish", ru:"рыбу"},
-    {icon:"🐬", en:"dolphin", ru:"дельфина"},
-    {icon:"🦈", en:"shark", ru:"акулу"},
-    {icon:"🐙", en:"octopus", ru:"осьминога"},
-    {icon:"🦀", en:"crab", ru:"краба"},
-    {icon:"🦋", en:"butterfly", ru:"бабочку"},
-    {icon:"🐞", en:"ladybug", ru:"божью коровку"},
-    {icon:"🐝", en:"bee", ru:"пчелу"},
-    {icon:"🪲", en:"beetle", ru:"жука"},
-    {icon:"🦗", en:"cricket", ru:"сверчка"},
-    {icon:"🦂", en:"scorpion", ru:"скорпиона"},
-    {icon:"🕷️", en:"spider", ru:"паука"},
-    {icon:"🐌", en:"snail", ru:"улитку"},
-    {icon:"🦔", en:"hedgehog", ru:"ёжика"},
-    {icon:"🦇", en:"bat", ru:"летучую мышь"},
-    {icon:"🦢", en:"swan", ru:"лебедя"},
-    {icon:"🦚", en:"peacock", ru:"павлина"},
-    {icon:"🦜", en:"parrot", ru:"попугая"},
-    {icon:"🐘", en:"elephant", ru:"слона"},
-    {icon:"🦒", en:"giraffe", ru:"жирафа"},
-    {icon:"🦓", en:"zebra", ru:"зебру"},
-    {icon:"🦘", en:"kangaroo", ru:"кенгуру"},
-    {icon:"🦥", en:"sloth", ru:"ленивца"}
-  ];
-
-  function allItems(){
-    return [...NUMBERS, ...FRUITS, ...OBJECTS, ...ANIMALS];
+function check(item){
+  const t=i18n[currentLang];
+  if(item===correctItem){
+    speak(`${t.bravo}, ${childName}!`, currentLang);
+    setTimeout(newRound,1200);
+  }else{
+    speak(`${t.wrong}, ${childName}. ${t.tryAgain}`, currentLang);
   }
+}
 
-  function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-  function showToast(el, text){
-    el.textContent = text;
-    el.classList.add("show");
-    setTimeout(()=>el.classList.remove("show"), 650);
-  }
-  function vibrate(ms=60){
-    if(navigator.vibrate) navigator.vibrate(ms);
-  }
+function backToSettings(){
+  game.classList.add("hidden");
+  settings.classList.remove("hidden");
+}
 
-  // ---------------- Confetti ----------------
-  const canvas = document.getElementById("fx");
-  const c = canvas.getContext("2d");
-  let W=0,H=0, confetti=[];
-  const colors = ["#ffb703","#fb8500","#ff006e","#8338ec","#3a86ff","#06d6a0","#8ac926","#ff595e"];
-  function resize(){
-    W = canvas.width = window.innerWidth * devicePixelRatio;
-    H = canvas.height = window.innerHeight * devicePixelRatio;
-  }
-  window.addEventListener("resize", resize);
-  resize();
+function clearAll(){
+  childNameInput.value="";
+  photoInput.value="";
+}
 
-  function popConfetti(){
-    const n = 80;
-    for(let i=0;i<n;i++){
-      confetti.push({
-        x: (window.innerWidth/2) * devicePixelRatio,
-        y: (window.innerHeight/2) * devicePixelRatio,
-        vx: (Math.random()*2-1) * 14,
-        vy: (Math.random()*2-1) * 14 - 8,
-        g: 0.6 + Math.random()*0.4,
-        s: 6 + Math.random()*10,
-        r: Math.random()*Math.PI,
-        vr:(Math.random()*2-1)*0.2,
-        col: pick(colors)
-      });
-    }
-  }
-
-  function tick(){
-    c.clearRect(0,0,W,H);
-    confetti = confetti.filter(p => p.y < H+80 && p.s>0.5);
-    for(const p of confetti){
-      p.vy += p.g;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.r += p.vr;
-      p.s *= 0.995;
-
-      c.save();
-      c.translate(p.x,p.y);
-      c.rotate(p.r);
-      c.fillStyle = p.col;
-      c.fillRect(-p.s/2, -p.s/2, p.s, p.s);
-      c.restore();
-    }
-    requestAnimationFrame(tick);
-  }
-  tick();
-
-  // ---------------- Screens / UI elements ----------------
-  const setupScreen = document.getElementById("setupScreen");
-  const gameScreen = document.getElementById("gameScreen");
-
-  const setupTitle = document.getElementById("setupTitle");
-  const setupNote = document.getElementById("setupNote");
-  const ttsNote = document.getElementById("ttsNote");
-
-  const kidNameInput = document.getElementById("kidNameInput");
-  const photoInput = document.getElementById("photoInput");
-  const avatarImg = document.getElementById("avatarImg");
-  const avatarFallback = document.getElementById("avatarFallback");
-
-  const langSelect = document.getElementById("langSelect");
-  const clearBtn = document.getElementById("clearBtn");
-  const startBtn = document.getElementById("startBtn");
-
-  const flagEl = document.getElementById("flagEl");
-  const taskText = document.getElementById("taskText");
-  const scoreText = document.getElementById("scoreText");
-  const toast = document.getElementById("toast");
-
-  const kidMini = document.getElementById("kidMini");
-  const kidNameHud = document.getElementById("kidNameHud");
-
-  const arena = document.getElementById("arena");
-
-  const newBtn = document.getElementById("newBtn");
-  const langBtn = document.getElementById("langBtn");
-  const soundBtn = document.getElementById("soundBtn");
-  const voiceBtn = document.getElementById("voiceBtn");
-  const backBtn = document.getElementById("backBtn");
-
-  // ---------------- Game state ----------------
-  let score = 0;
-  let count = 3;
-  let targetItem = null;
-  let kidName = "Ali";
-  let kidAvatar = null;
-
-  function applyLanguageUI(){
-    document.documentElement.lang = (lang==="RU") ? "ru" : "en";
-    flagEl.textContent = LANG[lang].flag;
-
-    setupTitle.textContent = LANG[lang].startTitle;
-    setupNote.textContent = LANG[lang].startNote;
-    ttsNote.textContent = LANG[lang].ttsTip;
-
-    newBtn.textContent = LANG[lang].btnNew;
-    backBtn.textContent = LANG[lang].btnBack;
-    langBtn.textContent = LANG[lang].langBtn(lang);
-    soundBtn.textContent = soundOn ? LANG[lang].btnSoundOn : LANG[lang].btnSoundOff;
-    voiceBtn.textContent = voiceOn ? LANG[lang].btnVoiceOn : LANG[lang].btnVoiceOff;
-
-    taskText.textContent = LANG[lang].listenHud;
-  }
-
-  function switchToSetup(){
-    setupScreen.classList.add("active");
-    gameScreen.classList.remove("active");
-    if("speechSynthesis" in window) window.speechSynthesis.cancel();
-  }
-
-  function switchToGame(){
-    setupScreen.classList.remove("active");
-    gameScreen.classList.add("active");
-    applyKidHud();
-    applyLanguageUI();
-    newLevel();
-  }
-
-  function applyKidHud(){
-    kidNameHud.textContent = kidName || "Kid";
-    kidMini.innerHTML = "";
-    if(kidAvatar){
-      const im = document.createElement("img");
-      im.src = kidAvatar;
-      im.alt = "kid";
-      kidMini.appendChild(im);
-    } else {
-      const d = document.createElement("div");
-      d.style.opacity = ".55";
-      d.textContent = "🙂";
-      kidMini.appendChild(d);
-    }
-  }
-
-  function setSetupAvatar(dataUrl){
-    kidAvatar = dataUrl || null;
-    if(kidAvatar){
-      avatarImg.src = kidAvatar;
-      avatarImg.style.display = "block";
-      avatarFallback.style.display = "none";
-    } else {
-      avatarImg.style.display = "none";
-      avatarFallback.style.display = "block";
-    }
-  }
-
-  function loadSaved(){
-    const savedName = localStorage.getItem(LS_NAME);
-    const savedAvatar = localStorage.getItem(LS_AVATAR);
-    const savedLang = localStorage.getItem(LS_LANG);
-
-    if(savedName) kidNameInput.value = savedName;
-    if(savedAvatar) setSetupAvatar(savedAvatar);
-
-    if(savedLang === "RU" || savedLang === "EN"){
-      lang = savedLang;
-      langSelect.value = savedLang;
-    } else {
-      lang = "EN";
-      langSelect.value = "EN";
-    }
-    applyLanguageUI();
-  }
-
-  function saveAll(){
-    localStorage.setItem(LS_NAME, kidName || "");
-    if(kidAvatar) localStorage.setItem(LS_AVATAR, kidAvatar);
-    else localStorage.removeItem(LS_AVATAR);
-    localStorage.setItem(LS_LANG, lang);
-  }
-
-  // ---------------- Placement collision ----------------
-  function intersects(a, b){
-    return !(a.x + a.w < b.x || b.x + b.w < a.x || a.y + a.h < b.y || b.y + b.h < a.y);
-  }
-
-  async function newLevel(){
-    arena.innerHTML = "";
-
-    if(score < 5) count = 3;
-    else if(score < 12) count = 4;
-    else if(score < 22) count = 5;
-    else count = 6;
-
-    const pool = allItems();
-    targetItem = pick(pool);
-
-    const chosen = [targetItem];
-    while(chosen.length < count){
-      const it = pick(pool);
-      if(!chosen.includes(it)) chosen.push(it);
-    }
-    for(let i=chosen.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [chosen[i], chosen[j]] = [chosen[j], chosen[i]];
-    }
-
-    // DO NOT show target in HUD. Only "Listen"
-    taskText.textContent = LANG[lang].listenHud;
-
-    // Speak task
-    const targetName = (lang === "RU") ? targetItem.ru : targetItem.en;
-    speak(LANG[lang].task(targetName), lang);
-
-    const box = arena.getBoundingClientRect();
-    const pad = 12;
-    const placed = [];
-
-    chosen.forEach((it) => {
-      const tile = document.createElement("div");
-      tile.className = "tile";
-
-      const big = document.createElement("div");
-      big.className = "big";
-      big.textContent = it.icon;
-
-      // no label under cards
-      tile.appendChild(big);
-      arena.appendChild(tile);
-
-      const r = tile.getBoundingClientRect();
-      const w = r.width;
-      const h = r.height;
-
-      const minX = pad;
-      const minY = pad;
-      const maxX = box.width - pad;
-      const maxY = box.height - pad;
-
-      let tries = 0;
-      let rect;
-      do{
-        tries++;
-        const x = randInt(minX, Math.max(minX, maxX - w));
-        const y = randInt(minY, Math.max(minY, maxY - h));
-        rect = { x, y, w, h };
-      } while(placed.some(p => intersects(rect, p)) && tries < 500);
-
-      placed.push(rect);
-      tile.style.left = rect.x + "px";
-      tile.style.top  = rect.y + "px";
-
-      tile.addEventListener("pointerdown", async () => {
-        if(soundOn && ctx && ctx.state === "suspended"){
-          ctx.resume().catch(()=>{});
-        }
-
-        if(it === targetItem){
-          score++;
-          scoreText.textContent = score;
-
-          beep("ok");
-          showToast(toast, LANG[lang].toastGreat);
-          popConfetti();
-
-          // wait for voice to finish, then pause, then next level
-          await speak(LANG[lang].correct(kidName || "Kid"), lang);
-          await new Promise(r => setTimeout(r, 500));
-          newLevel();
-        } else {
-          beep("no");
-          vibrate(60);
-          showToast(toast, LANG[lang].toastTry);
-
-          await speak(LANG[lang].wrong(kidName || "Kid"), lang);
-        }
-      });
-    });
-  }
-
-  // ---------------- Buttons ----------------
-  newBtn.addEventListener("click", newLevel);
-
-  langBtn.addEventListener("click", () => {
-    lang = (lang === "EN") ? "RU" : "EN";
-    langSelect.value = lang;
-    saveAll();
-    applyLanguageUI();
-    newLevel();
-  });
-
-  soundBtn.addEventListener("click", () => {
-    soundOn = !soundOn;
-    soundBtn.textContent = soundOn ? LANG[lang].btnSoundOn : LANG[lang].btnSoundOff;
-    if(soundOn && !ctx){
-      try{ ctx = new AudioCtx(); }catch(e){}
-    }
-  });
-
-  voiceBtn.addEventListener("click", () => {
-    voiceOn = !voiceOn;
-    voiceBtn.textContent = voiceOn ? LANG[lang].btnVoiceOn : LANG[lang].btnVoiceOff;
-    if(!voiceOn && "speechSynthesis" in window) window.speechSynthesis.cancel();
-  });
-
-  backBtn.addEventListener("click", () => {
-    saveAll();
-    switchToSetup();
-  });
-
-  // ---------------- Setup events ----------------
-  langSelect.addEventListener("change", () => {
-    const v = langSelect.value;
-    lang = (v === "RU") ? "RU" : "EN";
-    saveAll();
-    applyLanguageUI();
-  });
-
-  photoInput.addEventListener("change", () => {
-    const f = photoInput.files && photoInput.files[0];
-    if(!f) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = String(reader.result || "");
-      setSetupAvatar(dataUrl);
-      saveAll();
-    };
-    reader.readAsDataURL(f);
-  });
-
-  clearBtn.addEventListener("click", () => {
-    kidNameInput.value = "";
-    photoInput.value = "";
-    setSetupAvatar(null);
-    localStorage.removeItem(LS_NAME);
-    localStorage.removeItem(LS_AVATAR);
-  });
-
-  startBtn.addEventListener("click", () => {
-    kidName = (kidNameInput.value || "").trim() || "Ali";
-    kidAvatar = avatarImg.style.display === "block" ? avatarImg.src : null;
-    saveAll();
-    switchToGame();
-  });
-
-  // first tap wake-up for audio + voice
-  window.addEventListener("pointerdown", async () => {
-    try{
-      if(soundOn){
-        if(!ctx) ctx = new AudioCtx();
-        if(ctx.state === "suspended") await ctx.resume();
-      }
-      if(voiceOn){
-        await speak(lang === "RU" ? "Начнём!" : "Let’s start!", lang);
-      }
-    }catch(e){}
-  }, { once:true });
-
-  // ---------------- Init ----------------
-  loadSaved();
-})();
+/* ================= PWA ================= */
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("service-worker.js");
+}
 </script>
+
 </body>
 </html>
